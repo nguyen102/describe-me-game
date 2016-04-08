@@ -1,6 +1,8 @@
 import './game.html';
 
-//Meteor.subscribe("game");
+Template.game.onCreated(function gameOnCreated() {
+
+});
 
 Template.game.events({
     'click #answer-button': function (e) {
@@ -14,13 +16,13 @@ Template.game.events({
 });
 
 Template.game.helpers({
-    game: {
-        imageUrl: 'https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg',
-        score: 7,
-        timeLeft: 10
-    }
+    sessionId: '',
+    started: true,
+    imageUrl: 'https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg',
+    score: 7,
+    timeLeft: 10
 });
 
-_sendMessage = function() {
+_sendMessage = function () {
     alert('yo');
 };

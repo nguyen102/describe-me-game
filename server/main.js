@@ -1,5 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 
+Games = new Meteor.Collection("games");
+
 Meteor.startup(() => {
-  // code to run on server at startup
+
+    if (Meteor.isServer) {
+
+        Meteor.methods({
+
+        });
+    }
 });
