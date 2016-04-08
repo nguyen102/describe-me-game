@@ -1,7 +1,9 @@
 import './game.html';
+Games = new Meteor.Collection("games");
 
 Template.game.onCreated(function gameOnCreated() {
-    Meteor.subscribe('games', {userId: Meteor.userId()});
+    // Meteor.subscribe('games', {userId: Meteor.userId()});
+    Meteor.subscribe("games");
 });
 
 Template.game.events({
@@ -20,13 +22,12 @@ Template.game.helpers({
     started: true,
     imageUrl: 'https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg',
     score: 7,
-    timeLeft: 10,
-
-    createGame(){
-        let mygame = Meteor.call('games.create');
-    }
+    timeLeft: 10
 });
 
 _sendMessage = function () {
-    alert(Meteor.userId());
+    var answerBox = document.getElementById("answer-box");
+    console.log(answerBox.value);
+    answerBox.value = "";
+    answerBox.focus();
 };
