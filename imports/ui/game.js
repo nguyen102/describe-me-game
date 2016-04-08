@@ -20,9 +20,11 @@ Template.game.events({
 Template.game.helpers({
     sessionId: '',
     started: true,
-    imageUrl: 'https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg',
     score: 7,
-    timeLeft: 10
+    timeLeft: 10,
+    imageUrl: function() {
+        return Games.findOne().imageUrl;
+    }
 });
 
 _sendMessage = function () {
