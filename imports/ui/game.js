@@ -20,7 +20,11 @@ Template.game.helpers({
     started: true,
     imageUrl: 'https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg',
     score: 7,
-    timeLeft: 10
+    timeLeft: 10,
+
+    createGame(){
+        let mygame = Meteor.call('games.create');
+    }
 });
 
 _sendMessage = function () {

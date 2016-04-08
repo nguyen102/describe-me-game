@@ -33,6 +33,18 @@ Meteor.startup(() => {
              }*/
         });
 
-        Meteor.methods({});
+        Meteor.methods({
+            'games.create'(playerId){
+                let game = Games.insert({
+                    player1: playerId,
+                    player2: null,
+                    started: false,
+                    timeLeft: 120,
+                    score: 0
+                });
+
+                return game;
+            }
+        });
     }
 });
