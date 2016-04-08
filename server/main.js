@@ -1,13 +1,2 @@
-import { Meteor } from 'meteor/meteor';
+import '../imports/api/games.js';
 
-Games = new Meteor.Collection("games");
-
-Meteor.startup(() => {
-
-    if (Meteor.isServer) {
-
-        Meteor.methods({
-
-        });
-    }
-});

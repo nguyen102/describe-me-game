@@ -1,7 +1,7 @@
 import './game.html';
 
 Template.game.onCreated(function gameOnCreated() {
-
+    Meteor.subscribe('games', {userId: Meteor.userId()});
 });
 
 Template.game.events({
@@ -24,5 +24,5 @@ Template.game.helpers({
 });
 
 _sendMessage = function () {
-    alert('yo');
+    alert(Meteor.userId());
 };
