@@ -2,7 +2,7 @@ body {
     padding: 60px;
 }
 
-.gameboard .answer-box {
+.gameboard #answer-box {
     width: 50%;
     margin-bottom: 0px;
 }
