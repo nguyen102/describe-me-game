@@ -1,18 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 
-// export const Games = new Mongo.Collection('games');
 Games = new Meteor.Collection("games");
+Scores = new Meteor.Collection("scores");
+WordHistory = new Meteor.Collection("word_history");
+Messages = new Meteor.Collection("messages");
+
 Meteor.startup(() => {
 
     if (Meteor.isServer) {
-        // Meteor.publish('games', function gamePublication(userId) {
-        //     return Games.find();
-        // });
-
-
+        
         _createGame = function (playerId) {
             let game = Games.insert({
-                player1: playerId,
+                gameId: 1,
+                player1: null,
                 player2: null,
                 started: false,
                 timeLeft: 120,
@@ -24,8 +24,24 @@ Meteor.startup(() => {
         Games.remove({});
         _createGame(1);
 
+
+        Scores.remove({});
+        WordHistory.remove({});
+        Messages.remove({});
+        Scores.insert({name:"game1", score: 10});
+        
+        
         Meteor.publish("games", function() {
             return Games.find();
+        });
+        Meteor.publish("scores", function() {
+            return Scores.find();
+        });
+        Meteor.publish("word_history", function() {
+            return WordHistory.find();
+        });
+        Meteor.publish("messages", function(){
+            return Messages.find();
         });
 
     };

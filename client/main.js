@@ -9,7 +9,6 @@ Meteor.startup(function () {
     if (!Meteor.isClient) {
         return;
     }
-    // Meteor.subscribe("games");
     Accounts.ui.config({
         passwordSignupFields: 'USERNAME_ONLY'
     });
