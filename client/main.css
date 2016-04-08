@@ -1,1 +1,8 @@
-/* CSS declarations go here */
+body {
+    padding: 60px;
+}
+
+.gameboard .answer-box {
+    width: 50%;
+    margin-bottom: 0px;
+}

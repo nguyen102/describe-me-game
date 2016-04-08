@@ -3,24 +3,30 @@
 </head>
 
 <body>
-{{#if inGame}}
-    {{> gameRoom}}
-{{else}}
-    {{> waitingRoom}}
-{{/if}}
+<div class="container">
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <a class="brand" href="">name that game</a>
+            <ul class="nav">
+                <li><a href="https://github.com/jooleeatvb/name-that-game" target="_blank">Source</a></li>
+                <li><a href="https://www.wearevideoblocks.com" target="_blank">We Are Video Blocks</a></li>
+            </ul>
+            <ul class="nav pull-right">
+                <li><a>{{> loginButtons align="right"}}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    {{#if currentUser}}
+        <div class="row-fluid">
+            {{> game}}
+        </div>
+    {{else}}
+        <div class="hero-unit">
+            <p>Please login!</p>
+        </div>
+    {{/if}}
+
+</div>
 </body>
-
-<template name="hello">
-    <button>Click Me</button>
-    <p>You've pressed the button {{counter}} times.</p>
-</template>
-
-<template name="info">
-    <h2>Learn Meteor!</h2>
-    <ul>
-        <li><a href="https://www.meteor.com/try">Do the Tutorial</a></li>
-        <li><a href="http://guide.meteor.com">Follow the Guide</a></li>
-        <li><a href="https://docs.meteor.com">Read the Docs</a></li>
-        <li><a href="https://forums.meteor.com">Discussions</a></li>
-    </ul>
-</template>

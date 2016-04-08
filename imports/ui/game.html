@@ -1,0 +1,31 @@
+<template name="game">
+    <div class="span4 well">
+        {{> sidebar}}
+    </div>
+    <div class="span8 well gameboard">
+        {{> gameboard}}
+    </div>
+</template>
+
+<template name="sidebar">
+
+    <div class="alert alert-success">
+        <strong>Score</strong><br />
+        0
+    </div>
+    <div class="alert alert-info">
+        <strong>Time Left</strong><br />
+        01:25
+    </div>
+</template>
+
+<template name="gameboard">
+    <div class="row-fluid">
+        <input type="text" id="msg" placeholder="Say what" class="answer-box"/>
+        <input type="button" value="Name it" class="btn btn-primary sendMsg"/>
+    </div>
+    <div class="row-fluid">&nbsp;</div>
+    <div class="row-fluid">
+        <img src="https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg"/>
+    </div>
+</template>
