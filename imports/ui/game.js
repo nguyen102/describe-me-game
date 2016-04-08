@@ -2,24 +2,35 @@ import './game.html';
 Games = new Meteor.Collection("games");
 Scores = new Meteor.Collection("scores");
 WordHistory = new Meteor.Collection("word_history");
-Messages = new Meteor.Collection("messages");
+
+var lastEnteredWord = "";
+var timeLeft = 60;
 
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
     Meteor.subscribe("scores");
     Meteor.subscribe("word_history");
-    Meteor.subscribe("messages");
+    setInterval(function(){
+        if(timeLeft % 10 == 0){
+            Meteor.call("updatePicture", 6 - Math.floor(timeLeft / 10), function(error, result){});
+        }
+        timeLeft = timeLeft - 1;
+        Session.set("time", timeLeft);
+        if (timeLeft <= 0){
+            clearInterval();
+        }
+    }, 1000);
 });
 
 Template.game.events({
     'click #answer-button': function (e) {
-        _sendMessage();
+        _sendWord();
         _updateScore();
         _resetAnswerBox();
     },
     'keyup #answer-box': function (e) {
         if (e.type == "keyup" && e.which == 13) {
-            _sendMessage();
+            _sendWord();
             _updateScore();
             _resetAnswerBox();
         }
@@ -29,7 +40,6 @@ Template.game.events({
 _updateScore = function() {
     var currentScore = Scores.findOne({name: "game1"}).score;
     var id = Scores.findOne({name: "game1"})._id;
-    var lastEnteredWord = Messages.findOne({}, {sort: {ts:-1},limit: 1}).msg;
 
     var otherUserName;
     if ( Meteor.user().username == "tim") {
@@ -47,7 +57,7 @@ _updateScore = function() {
         if(lastEnteredWord == otherUserWords[i]) {
             _removeWordFromWordHistory(lastEnteredWord, Meteor.user().username);
             _removeWordFromWordHistory(lastEnteredWord, otherUserName);
-            currentScore += 1;
+            currentScore += 10;
         }
     }
 
@@ -66,9 +76,9 @@ _removeWordFromWordHistory = function(word, userName){
 
 
 
-_sendMessage = function () {
+_sendWord = function () {
     var answerBox = document.getElementById("answer-box");
-    Messages.insert({user: Meteor.user().username, msg: answerBox.value, ts: new Date()});
+    lastEnteredWord = answerBox.value;
     _addToWordHistory(Meteor.user().username, answerBox.value);
 };
 
@@ -103,7 +113,9 @@ Template.game.helpers({
             return Scores.findOne({name: "game1"}).score;
         }
     },
-    timeLeft: 10,
+    timeLeft: function() {
+        return Session.get("time");
+    },
     imageUrl: function() {
         if (Games.findOne() != null){
             return Games.findOne().imageUrl;
