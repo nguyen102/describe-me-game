@@ -29,13 +29,12 @@ Meteor.startup(() => {
                 availableGame.timeLeft = 120;
                 availableGame.totalScore = 0;
                 availableGame.imageUrl = Random.choice(imageUrls);
-                availableGame.done = false;
 
                 Games.update({_id: availableGame._id}, availableGame);
 
                 Meteor.setTimeout(function() {
                     _resetImage(availableGame);
-                }, 1000);
+                }, 15000);
 
                 return availableGame._id;
 
@@ -55,6 +54,8 @@ Meteor.startup(() => {
             console.log(game._id + "yo");
             game.timeLeft = game.timeLeft - 15;
             game.imageUrl = imageUrls[_.random(0, 5)];
+            Games.update({_id: game._id}, game);
+
             if(game.timeLeft > 0){
                 Meteor.setTimeout(function() {
                     _resetImage(game);
