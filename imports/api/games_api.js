@@ -20,7 +20,8 @@ Meteor.startup(() => {
                 player1: null,
                 player2: null,
                 started: false,
-                timeLeft: 120,
+                timeLeft: 60,
+                startTime: null,
                 score: 0,
                 imageUrl: "https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg"
             });

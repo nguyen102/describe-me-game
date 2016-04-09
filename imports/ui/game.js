@@ -4,20 +4,33 @@ Scores = new Meteor.Collection("scores");
 WordHistory = new Meteor.Collection("word_history");
 
 var lastEnteredWord = "";
-var timeLeft = 60;
+var clockTime = 60;
 
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
     Meteor.subscribe("scores");
     Meteor.subscribe("word_history");
-    setInterval(function(){
+    timeCountDown = setInterval(function(){
+        var timeLeft = clockTime;
+        if (Games.findOne().startTime == null){
+            id = Games.findOne()._id;
+            date = new Date();
+            time = Math.floor(date.getTime() / 1000);
+            Games.update({_id: id}, {$set: {startTime: time}});
+        }else {
+            startTime = Games.findOne().startTime;
+            date = new Date();
+            time = Math.floor(date.getTime() / 1000);
+            timeLeft = clockTime - (time - startTime);
+            // Games.update({_id: id}, {$set: {startTime: time}});
+        }
         if(timeLeft % 10 == 0){
             Meteor.call("updatePicture", 6 - Math.floor(timeLeft / 10), function(error, result){});
         }
-        timeLeft = timeLeft - 1;
+        // timeLeft = timeLeft - 1;
         Session.set("time", timeLeft);
         if (timeLeft <= 0){
-            clearInterval();
+            clearInterval(timeCountDown);
         }
     }, 1000);
 });
@@ -115,6 +128,9 @@ Template.game.helpers({
     },
     timeLeft: function() {
         return Session.get("time");
+        // if (Games.findOne() != null){
+        //     return Games.findOne().timeLeft;
+        // }
     },
     imageUrl: function() {
         if (Games.findOne() != null){
