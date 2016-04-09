@@ -1,49 +1,17 @@
-// function _updateScore() {
-//     var currentScore = Scores.findOne({name: "game1"}).score;
-//     var id = Scores.findOne({name: "game1"})._id;
-//
-//     var otherUserName;
-//     if ( Meteor.user().username == "tim") {
-//         otherUserName = "joo";
-//     } else {
-//         otherUserName = "tim";
-//     }
-//
-//     otherUser = WordHistory.findOne({name: otherUserName});
-//     if (otherUser == null) {
-//         WordHistory.insert({name:  otherUserName, words: []});
-//     }
-//     var otherUserWords = WordHistory.findOne({name: otherUserName}).words;
-//     for(var i = 0; i < otherUserWords.length; i++){
-//         if(lastEnteredWord == otherUserWords[i]) {
-//             _removeWordFromWordHistory(lastEnteredWord, Meteor.user().username);
-//             _removeWordFromWordHistory(lastEnteredWord, otherUserName);
-//             currentScore += 10;
-//         }
-//     }
-//
-//     Scores.update({_id: id}, {$set:{score: currentScore }});
-// };
 _updateScore = function() {
-    var currentScore = Games.findOne({_id: Session.get("gameId")}).score;
-    console.log("Current score is: " + currentScore);
+    var game = Games.findOne({_id: Session.get("gameId")});
+    var currentScore = game.score;
 
-    var otherUserName;
-    if ( Meteor.user().username == "tim") {
-        otherUserName = "joo";
+    var otherUserWords = "";
+    if (Meteor.userId() == game.player1) {
+        otherUserWords = game.player2WordList
     } else {
-        otherUserName = "tim";
+        otherUserWords = game.player1WordList;
     }
-
-    otherUser = WordHistory.findOne({name: otherUserName});
-    if (otherUser == null) {
-        WordHistory.insert({name:  otherUserName, words: []});
-    }
-    var otherUserWords = WordHistory.findOne({name: otherUserName}).words;
     for(var i = 0; i < otherUserWords.length; i++){
         if(lastEnteredWord == otherUserWords[i]) {
-            _removeWordFromWordHistory(lastEnteredWord, Meteor.user().username);
-            _removeWordFromWordHistory(lastEnteredWord, otherUserName);
+            _removeWordFromWordHistory(lastEnteredWord, "player1");
+            _removeWordFromWordHistory(lastEnteredWord, "player2");
             currentScore += 10;
         }
     }
@@ -52,14 +20,23 @@ _updateScore = function() {
 };
 
 
-_removeWordFromWordHistory = function(word, userName){
-    var id = WordHistory.findOne({name: userName})._id;
-    var words = WordHistory.findOne({name: userName}).words;
-    var index = words.indexOf(word);
-    if (index > - 1) {
-        words.splice(index, 1);
+_removeWordFromWordHistory = function(word, userType){
+    var game = Games.findOne({_id: Session.get("gameId")});
+    var wordList = "";
+    if (userType == "player1"){
+        wordList = game.player1WordList;
+    } else {
+        wordList = game.player2WordList;
     }
-    WordHistory.update({_id: id}, {$set: {words: words}});
+    var index = wordList.indexOf(word);
+    if (index > - 1) {
+        wordList.splice(index, 1);
+    }
+    if(userType == "player1"){
+        Games.update({_id: Session.get("gameId")}, {$set: {player1WordList: wordList}});
+    }else {
+        Games.update({_id: Session.get("gameId")}, {$set: {player2WordList: wordList}});
+    }
 };
 
 
@@ -67,19 +44,24 @@ _removeWordFromWordHistory = function(word, userName){
 _sendWord = function () {
     var answerBox = document.getElementById("answer-box");
     lastEnteredWord = answerBox.value;
-    _addToWordHistory(Meteor.user().username, answerBox.value);
+    _addToWordHistory(answerBox.value);
 };
 
-_addToWordHistory = function(username, word) {
-    user = WordHistory.findOne({name: username});
-    if (user == null) {
-        WordHistory.insert({name:  Meteor.user().username, words: []});
+_addToWordHistory = function(word) {
+    var game = Games.findOne({_id: Session.get("gameId")});
+    var words;
+    if (Meteor.userId() == game.player1) {
+        words = game.player1WordList;
+    } else {
+        words = game.player2WordList;
     }
-    var words = WordHistory.findOne({name: Meteor.user().username}).words;
     if (!_isInArray(word, words)){
-        var id = WordHistory.findOne({name: Meteor.user().username})._id;
         words.push(word);
-        WordHistory.update({_id: id}, {$set: {words: words}});
+        if (Meteor.userId() == game.player1) {
+            Games.update({_id: Session.get("gameId")}, {$set: {player1WordList: words}});
+        } else {
+            Games.update({_id: Session.get("gameId")}, {$set: {player2WordList: words}});
+        }
     }
 };
 
@@ -92,3 +74,6 @@ _resetAnswerBox = function() {
     answerBox.value = "";
     answerBox.focus();
 };
+
+//TODO Use this instead of if statement player1 player2
+//http://stackoverflow.com/questions/17362401/how-to-set-mongo-field-from-variable

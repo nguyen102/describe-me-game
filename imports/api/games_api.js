@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 Games = new Meteor.Collection("games");
-Scores = new Meteor.Collection("scores");
-WordHistory = new Meteor.Collection("word_history");
+
 var imageUrls = ["https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg",
 "http://cdn1.theodysseyonline.com/files/2015/12/21/6358631429926013411708851658_Dog-Pictures.jpg", 
     "http://media.caranddriver.com/images/media/51/2016-10best-cars-lead-photo-664005-s-original.jpg",
@@ -13,25 +12,11 @@ var imageUrls = ["https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0
 Meteor.startup(() => {
 
     if (Meteor.isServer) {
-        
-        // function _createGame(playerId) {
-        //     let game = Games.insert({
-        //         gameId: 1,
-        //         player1: null,
-        //         player2: null,
-        //         started: false,
-        //         startTime: null,
-        //         score: 0,
-        //         imageUrl: "https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg"
-        //     });
-        //     return game;
-        // };
         Games.remove({});
-        Scores.remove({});
-        WordHistory.remove({});
+        // Scores.remove({});
+        // WordHistory.remove({});
         
-        // _createGame(1);
-        Scores.insert({name:"game1", score: 0});
+        // Scores.insert({name:"game1", score: 0});
 
         Meteor.methods({
             'updatePicture': function(index) {
@@ -46,9 +31,6 @@ Meteor.startup(() => {
 
         Meteor.publish("games", function() {
             return Games.find();
-        });
-        Meteor.publish("scores", function() {
-            return Scores.find();
         });
         Meteor.publish("word_history", function() {
             return WordHistory.find();
@@ -71,10 +53,7 @@ Meteor.startup(() => {
                 availableGame.imageUrl = imageUrls[0];
 
                 Games.update({_id: availableGame._id}, availableGame);
-
-                Meteor.setTimeout(function () {
-                    _resetImage(availableGame);
-                }, 15000);
+                
 
                 return availableGame._id;
 

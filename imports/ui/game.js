@@ -1,16 +1,13 @@
 import './game.html';
 import './lib.js';
 Games = new Meteor.Collection("games");
-Scores = new Meteor.Collection("scores");
-WordHistory = new Meteor.Collection("word_history");
 
 var clockTime = 60;
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
-    Meteor.subscribe("scores");
-    Meteor.subscribe("word_history");
+    // Meteor.subscribe("word_history");
 
-    Meteor.call('joinGame', Meteor.user().username, function(error, gameId){
+    Meteor.call('joinGame', Meteor.userId(), function(error, gameId){
         Session.set("gameId", gameId);
         if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
             var timeCountDown = setInterval(function(){
