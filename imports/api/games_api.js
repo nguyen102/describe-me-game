@@ -13,14 +13,9 @@ Meteor.startup(() => {
 
     if (Meteor.isServer) {
         Games.remove({});
-        // Scores.remove({});
-        // WordHistory.remove({});
-        
-        // Scores.insert({name:"game1", score: 0});
-
         Meteor.methods({
-            'updatePicture': function(index) {
-                var gameId = Games.findOne()._id;
+            'updatePicture': function(gameId, index) {
+                // var gameId = Games.findOne()._id;
                 Games.update({_id: gameId}, 
                     {$set: {imageUrl: imageUrls[index]}});
             },
@@ -41,7 +36,8 @@ Meteor.startup(() => {
             let availableGame = Games.findOne({
                 player1: {$exists: true},
                 player2: {$exists: false},
-                started: false
+                started: false,
+                done: false
             });
 
             if (availableGame && availableGame.player1 != playerId && availableGame.player2 != playerId) {
@@ -51,6 +47,7 @@ Meteor.startup(() => {
                 availableGame.player1WordList = [];
                 availableGame.player2WordList = [];
                 availableGame.imageUrl = imageUrls[0];
+                availableGame.startTime = Math.floor(new Date().getTime() / 1000);
 
                 Games.update({_id: availableGame._id}, availableGame);
                 
@@ -62,7 +59,8 @@ Meteor.startup(() => {
                 let gameId = Games.insert({
                     player1: playerId,
                     timeLeft: 60,
-                    started: false
+                    started: false,
+                    done: false
                 });
 
                 return gameId;

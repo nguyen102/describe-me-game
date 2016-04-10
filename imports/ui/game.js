@@ -5,7 +5,6 @@ Games = new Meteor.Collection("games");
 var clockTime = 60;
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
-    // Meteor.subscribe("word_history");
 
     Meteor.call('joinGame', Meteor.userId(), function(error, gameId){
         Session.set("gameId", gameId);
@@ -14,20 +13,16 @@ Template.game.onCreated(function gameOnCreated() {
                 timeLeft = clockTime;
                 date = new Date();
                 time = Math.floor(date.getTime() / 1000);
-                if (Games.findOne().startTime == null){
-                    id = Games.findOne()._id;
-                    Games.update({_id: id}, {$set: {startTime: time}});
-                }else {
-                    startTime = Games.findOne().startTime;
-                    timeLeft = clockTime - (time - startTime);
-                }
+                startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
+                timeLeft = clockTime - (time - startTime);
                 if(timeLeft % 10 == 0){
-                    Meteor.call("updatePicture", 6 - Math.floor(timeLeft / 10), function(error, result){});
+                    Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
                 }
                 Session.set("time", timeLeft);
                 Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
                 if (timeLeft <= 0){
                     clearInterval(timeCountDown);
+                    Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
                 }
             }, 1000);
         }
@@ -53,7 +48,7 @@ Template.game.events({
 Template.game.helpers({
     sessionId: '',
     started: function() {
-        gameId = Session.get("gameId")
+        gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
             return Games.findOne({_id: gameId}).started;
         }
@@ -64,14 +59,16 @@ Template.game.helpers({
         }
     },
     timeLeft: function() {
-        gameId = Session.get("gameId")
+        gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
             return Games.findOne({_id: gameId}).timeLeft;
+        }else{
+            return clockTime;
         }
     },
     imageUrl: function() {
-        if (Games.findOne() != null){
-            return Games.findOne().imageUrl;
+        if (Games.findOne(Session.get("gameId")) != null){
+            return Games.findOne(Session.get("gameId")).imageUrl;
         }
     }
 });
