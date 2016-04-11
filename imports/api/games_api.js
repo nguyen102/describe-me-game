@@ -34,12 +34,11 @@ Meteor.startup(() => {
 
         _getSixRandomPictures = function() {
             var randomPictureUrls = [];
-            for(var i = 0; i < 6; i++){
+            for(var i = 0; i < 6; i++) {
                 var number = Math.floor((Math.random() * 100) + 10);
-                randomPictureUrls.push("https://unsplash.it/300/500/?image=" + number);
+                randomPictureUrls.push("https://unsplash.it/300?image=" + number);
             }
             return randomPictureUrls;
-
         };
 
         function _joinGame(playerId, userName) {
