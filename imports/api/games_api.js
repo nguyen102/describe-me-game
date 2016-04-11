@@ -8,7 +8,8 @@ var imageUrls = ["https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0
     "http://u.realgeeks.media/islandsearch/tahitiisland.jpg",
     "https://images.trvl-media.com/media/content/expus/graphics/launch/cruise1320x742.jpg",
     "http://az616578.vo.msecnd.net/files/2016/03/05/635928088052093326-1019743780_woman_smelling_flowers_in_the_field.jpg"
-]
+];
+
 Meteor.startup(() => {
 
     if (Meteor.isServer) {

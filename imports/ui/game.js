@@ -23,6 +23,7 @@ Template.game.onCreated(function gameOnCreated() {
                 if (timeLeft <= 0){
                     clearInterval(timeCountDown);
                     Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
+                    _lookForWordsThatMightHaveBeenMissed(Games.findOne({_id: Session.get("gameId")}));
                 }
             }, 1000);
         }

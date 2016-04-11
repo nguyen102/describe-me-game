@@ -60,6 +60,29 @@ _opposingPlayerUserName = function(game) {
     }
 };
 
+_lookForWordsThatHaveBeenMissed = function(game){
+    var matchingElements = _getMatchingElements(game.player1WordList, game.player2WordList);
+    var previouslyMatchedWords = game.matchingWords;
+    var newMatchedWords = previouslyMatchedWords;
+    matchingElements.forEach(function(element){
+        if (! _isInArray(element, previouslyMatchedWords)){
+            newMatchedWords.push(element);
+        }
+    });
+    Games.update({_id: game._id}, {$set: {matchingWords: newMatchedWords}});
+    Games.update({_id: game._id}, {$set: {score: newMatchedWords.length * 10}});
+};
+
+_getMatchingElements = function(wordListA, wordListB) {
+    var ret = [];
+    for(var i in wordListB) {
+        if(wordListA.indexOf( wordListB[i] ) > -1){
+            ret.push(wordListB[i]);
+        }
+    }
+    return ret;
+};
+
 //TODO Use this instead of if statement player1 player2
 //http://stackoverflow.com/questions/17362401/how-to-set-mongo-field-from-variable
 
