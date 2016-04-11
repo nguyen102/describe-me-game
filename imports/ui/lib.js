@@ -59,7 +59,8 @@ _opposingPlayerUserName = function(game) {
         return game.user1Name;
     }
 };
-
+//If both user type a word at the same time, Meteor will not report the matching word because the DB update for
+//both the client won't recieve the updated words fast enough
 _lookForWordsThatMightHaveBeenMissed = function(game){
     var matchingElements = _getMatchingElements(game.player1WordList, game.player2WordList);
     var previouslyMatchedWords = game.matchingWords;
