@@ -7,7 +7,7 @@ timePerPicture = 10;
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
 
-    Meteor.call('joinGame', Meteor.userId(), function(error, gameId){
+    Meteor.call('joinGame', Meteor.userId(), Meteor.user().username, function(error, gameId){
         Session.set("gameId", gameId);
         if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
             var timeCountDown = setInterval(function(){
@@ -69,6 +69,12 @@ Template.game.helpers({
     imageUrl: function() {
         if (Games.findOne(Session.get("gameId")) != null){
             return Games.findOne(Session.get("gameId")).imageUrl;
+        }
+    },
+    opposingPlayer: function() {
+        var gameId = Session.get("gameId");
+        if(Games.findOne({_id: gameId}) != null){
+            return _opposingPlayerUserName(Games.findOne(Session.get("gameId")));
         }
     }
 });

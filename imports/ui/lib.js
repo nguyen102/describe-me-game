@@ -51,6 +51,14 @@ _resetAnswerBox = function() {
     answerBox.focus();
 };
 
+_opposingPlayerUserName = function(game) {
+    if (Meteor.userId() == game.player1) {
+        return game.user2Name;
+    }else {
+        return game.user1Name;
+    }
+};
+
 //TODO Use this instead of if statement player1 player2
 //http://stackoverflow.com/questions/17362401/how-to-set-mongo-field-from-variable
 

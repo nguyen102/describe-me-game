@@ -19,8 +19,8 @@ Meteor.startup(() => {
                 Games.update({_id: gameId}, 
                     {$set: {imageUrl: imageUrls[index]}});
             },
-            'joinGame': function(playerId) {
-                return _joinGame(playerId);
+            'joinGame': function(playerId, userName) {
+                return _joinGame(playerId, userName);
             }
         });
 
@@ -31,8 +31,9 @@ Meteor.startup(() => {
             return WordHistory.find();
         });
 
-        function _joinGame(playerId) {
-
+        function _joinGame(playerId, userName) {
+            console.log("Playerid: " + playerId);
+            console.log("username: " + userName);
             let availableGame = Games.findOne({
                 player1: {$exists: true},
                 player2: {$exists: false},
@@ -42,6 +43,7 @@ Meteor.startup(() => {
 
             if (availableGame && availableGame.player1 != playerId && availableGame.player2 != playerId) {
                 availableGame.player2 = playerId;
+                availableGame.user2Name = userName;
                 availableGame.started = true;
                 availableGame.score = 0;
                 availableGame.player1WordList = [];
@@ -58,6 +60,7 @@ Meteor.startup(() => {
 
                 let gameId = Games.insert({
                     player1: playerId,
+                    user1Name: userName,
                     timeLeft: 60,
                     started: false,
                     done: false
