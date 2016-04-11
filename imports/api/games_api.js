@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 
 Games = new Meteor.Collection("games");
 
-var imageUrls = ["https://d1yn1kh78jj1rr.cloudfront.net/preview/cal-retrotoons-0814-192_M.jpg",
+var imageUrls = ["https://unsplash.it/800/500?image=0",
 "http://cdn1.theodysseyonline.com/files/2015/12/21/6358631429926013411708851658_Dog-Pictures.jpg", 
     "http://media.caranddriver.com/images/media/51/2016-10best-cars-lead-photo-664005-s-original.jpg",
     "http://u.realgeeks.media/islandsearch/tahitiisland.jpg",
@@ -16,9 +16,9 @@ Meteor.startup(() => {
         Games.remove({});
         Meteor.methods({
             'updatePicture': function(gameId, index) {
-                // var gameId = Games.findOne()._id;
+                var urls = Games.findOne({_id: gameId}).allImageUrls;
                 Games.update({_id: gameId}, 
-                    {$set: {imageUrl: imageUrls[index]}});
+                    {$set: {imageUrl: urls[index]}});
             },
             'joinGame': function(playerId, userName) {
                 return _joinGame(playerId, userName);
@@ -32,9 +32,17 @@ Meteor.startup(() => {
             return WordHistory.find();
         });
 
+        _getSixRandomPictures = function() {
+            var randomPictureUrls = [];
+            for(var i = 0; i < 6; i++){
+                var number = Math.floor((Math.random() * 1000) + 1);
+                randomPictureUrls.push("https://unsplash.it/800/500?image=" + number);
+            }
+            return randomPictureUrls;
+
+        };
+
         function _joinGame(playerId, userName) {
-            console.log("Playerid: " + playerId);
-            console.log("username: " + userName);
             let availableGame = Games.findOne({
                 player1: {$exists: true},
                 player2: {$exists: false},
@@ -43,14 +51,16 @@ Meteor.startup(() => {
             });
 
             if (availableGame && availableGame.player1 != playerId && availableGame.player2 != playerId) {
+                var urls = _getSixRandomPictures();
                 availableGame.player2 = playerId;
                 availableGame.user2Name = userName;
                 availableGame.started = true;
                 availableGame.score = 0;
                 availableGame.player1WordList = [];
                 availableGame.player2WordList = [];
-                availableGame.imageUrl = imageUrls[0];
+                availableGame.imageUrl = urls[0];
                 availableGame.startTime = Math.floor(new Date().getTime() / 1000);
+                availableGame.allImageUrls = urls;
 
                 Games.update({_id: availableGame._id}, availableGame);
                 
