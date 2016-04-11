@@ -8,6 +8,7 @@ _updateScore = function() {
     for(var i = 0; i < otherUserWords.length; i++){
         if(lastEnteredWord == otherUserWords[i]) {
             _removeWordFromWordHistory(game, lastEnteredWord);
+            _addToMatchingWords(game, lastEnteredWord);
             currentScore += 10;
         }
     }

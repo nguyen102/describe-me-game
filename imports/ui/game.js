@@ -76,5 +76,11 @@ Template.game.helpers({
         if(Games.findOne({_id: gameId}) != null){
             return _opposingPlayerUserName(Games.findOne(Session.get("gameId")));
         }
+    },
+    matchingWords: function() {
+        var gameId = Session.get("gameId");
+        if(Games.findOne({_id: gameId}) != null){
+            return Games.findOne(Session.get("gameId")).matchingWords;
+        }
     }
 });

@@ -61,6 +61,7 @@ Meteor.startup(() => {
                 let gameId = Games.insert({
                     player1: playerId,
                     user1Name: userName,
+                    matchingWords: [],
                     timeLeft: 60,
                     started: false,
                     done: false

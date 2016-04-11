@@ -37,3 +37,9 @@ _setWordList = function(userType, wordList) {
         Games.update({_id: Session.get("gameId")}, {$set: {player2WordList: wordList}});
     }
 };
+
+_addToMatchingWords = function(game, word) {
+    var matchingWords = game.matchingWords;
+    matchingWords.push(word);
+    Games.update({_id: Session.get("gameId")}, {$set: {matchingWords: matchingWords}});
+}; 
