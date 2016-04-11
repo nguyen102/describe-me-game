@@ -28,8 +28,19 @@
             </div>
         </div>
     {{else}}
-        <div class="hero-unit">
-            <p>Waiting for your soulmate...</p>
-        </div>
+        {{#if opposingPlayerFound}}
+            <div class="hero-unit">
+                {{#if playerReady}}
+                    <p>Waiting for {{opposingPlayer}} to click Start.</p>
+                {{else}}
+                    <p>Click start to begin.</p>
+                {{/if}}
+                <input type="button" id="start-button" value="Start" class="btn btn-primary"/>
+            </div>
+        {{else}}
+            <div class="hero-unit">
+                <p>Waiting for your soulmate...</p>
+            </div>
+        {{/if}}
     {{/if}}
 </template>

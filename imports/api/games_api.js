@@ -53,13 +53,15 @@ Meteor.startup(() => {
                 var urls = _getSixRandomPictures();
                 availableGame.player2 = playerId;
                 availableGame.user2Name = userName;
-                availableGame.started = true;
+                availableGame.started = false;
                 availableGame.score = 0;
                 availableGame.player1WordList = [];
                 availableGame.player2WordList = [];
                 availableGame.imageUrl = urls[0];
-                availableGame.startTime = Math.floor(new Date().getTime() / 1000);
+                // availableGame.startTime = Math.floor(new Date().getTime() / 1000);
                 availableGame.allImageUrls = urls;
+                availableGame.player1Ready = false;
+                availableGame.player2Ready = false;
 
                 Games.update({_id: availableGame._id}, availableGame);
                 

@@ -62,6 +62,20 @@ _opposingPlayerUserName = function(game) {
         return game.user1Name;
     }
 };
+
+_opposingPlayerFound = function(game) {
+    return game.player1 && game.player2;
+};
+
+_playerReady = function(game) {
+    if (Meteor.userId() == game.player1) {
+        return game.player1Ready;
+    }else {
+        return game.player2Ready;
+    }
+};
+
+
 //If both user type a word at the same time, Meteor will not report the matching word because the DB update for
 //both the client won't recieve the updated words fast enough
 _lookForWordsThatMightHaveBeenMissed = function(){
@@ -88,6 +102,43 @@ _getMatchingElements = function(wordListA, wordListB) {
     return ret;
 };
 
+_readyToStart = function() {
+    var game = Games.findOne({_id: Session.get("gameId")});
+    var gameId = Session.get("gameId");
+    if (Meteor.userId() == game.player1) {
+        Games.update({_id: gameId}, {$set: {player1Ready: true}});
+    } else {
+        Games.update({_id: gameId}, {$set: {player2Ready: true}});
+    }
+    game = Games.findOne({_id: Session.get("gameId")});
+    if (game.player1Ready && game.player2Ready){
+        Games.update({_id: gameId}, {$set: {started: true}});
+        Games.update({_id: gameId}, {$set: {startTime: Math.floor(new Date().getTime() / 1000)}});
+        _startTimer();
+    }
+};
+
+_startTimer = function() {
+    if (Games.findOne({_id: Session.get("gameId")})){
+        var timeCountDown = setInterval(function(){
+            console.log("inside counter");
+            date = new Date();
+            time = Math.floor(date.getTime() / 1000);
+            startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
+            timeLeft = clockTime - (time - startTime);
+            if(timeLeft % timePerPicture == 0){
+                Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
+            }
+            Session.set("time", timeLeft);
+            Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
+            if (timeLeft <= 0){
+                clearInterval(timeCountDown);
+                Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
+                _lookForWordsThatMightHaveBeenMissed();
+            }
+        }, 1000);
+    }
+};
 //TODO Use this instead of if statement player1 player2
 //http://stackoverflow.com/questions/17362401/how-to-set-mongo-field-from-variable
 

@@ -9,24 +9,25 @@ Template.game.onCreated(function gameOnCreated() {
 
     Meteor.call('joinGame', Meteor.userId(), Meteor.user().username, function(error, gameId){
         Session.set("gameId", gameId);
-        if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
-            var timeCountDown = setInterval(function(){
-                date = new Date();
-                time = Math.floor(date.getTime() / 1000);
-                startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
-                timeLeft = clockTime - (time - startTime);
-                if(timeLeft % timePerPicture == 0){
-                    Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
-                }
-                Session.set("time", timeLeft);
-                Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
-                if (timeLeft <= 0){
-                    clearInterval(timeCountDown);
-                    Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
-                    _lookForWordsThatMightHaveBeenMissed();
-                }
-            }, 1000);
-        }
+        // if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
+        //     var timeCountDown = setInterval(function(){
+        //         console.log("inside counter");
+        //         date = new Date();
+        //         time = Math.floor(date.getTime() / 1000);
+        //         startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
+        //         timeLeft = clockTime - (time - startTime);
+        //         if(timeLeft % timePerPicture == 0){
+        //             Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
+        //         }
+        //         Session.set("time", timeLeft);
+        //         Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
+        //         if (timeLeft <= 0){
+        //             clearInterval(timeCountDown);
+        //             Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
+        //             _lookForWordsThatMightHaveBeenMissed();
+        //         }
+        //     }, 1000);
+        // }
     });
 
 });
@@ -43,6 +44,9 @@ Template.game.events({
             _updateScore();
             _resetAnswerBox();
         }
+    },
+    'click #start-button': function (e) {
+        _readyToStart();
     }
 });
 
@@ -82,6 +86,18 @@ Template.game.helpers({
         var gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
             return Games.findOne(Session.get("gameId")).matchingWords;
+        }
+    },
+    playerReady: function() {
+        var gameId = Session.get("gameId");
+        if(Games.findOne({_id: gameId}) != null){
+            return _playerReady(Games.findOne(Session.get("gameId")));
+        }
+    },
+    opposingPlayerFound: function() {
+        var gameId = Session.get("gameId");
+        if(Games.findOne({_id: gameId}) != null){
+            return _opposingPlayerFound(Games.findOne(Session.get("gameId")));
         }
     }
 });
