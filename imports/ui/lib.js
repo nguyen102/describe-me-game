@@ -1,17 +1,13 @@
+import './helperFunctions.js';
+
 _updateScore = function() {
     var game = Games.findOne({_id: Session.get("gameId")});
     var currentScore = game.score;
 
-    var otherUserWords = "";
-    if (Meteor.userId() == game.player1) {
-        otherUserWords = game.player2WordList
-    } else {
-        otherUserWords = game.player1WordList;
-    }
+    var otherUserWords = _getOpposingPlayerWordList(game);
     for(var i = 0; i < otherUserWords.length; i++){
         if(lastEnteredWord == otherUserWords[i]) {
-            _removeWordFromWordHistory(lastEnteredWord, "player1");
-            _removeWordFromWordHistory(lastEnteredWord, "player2");
+            _removeWordFromWordHistory(game, lastEnteredWord);
             currentScore += 10;
         }
     }
@@ -19,27 +15,16 @@ _updateScore = function() {
     Games.update({_id: Session.get("gameId")}, {$set:{score: currentScore }});
 };
 
-
-_removeWordFromWordHistory = function(word, userType){
-    var game = Games.findOne({_id: Session.get("gameId")});
-    var wordList = "";
-    if (userType == "player1"){
-        wordList = game.player1WordList;
-    } else {
-        wordList = game.player2WordList;
-    }
-    var index = wordList.indexOf(word);
-    if (index > - 1) {
-        wordList.splice(index, 1);
-    }
-    if(userType == "player1"){
-        Games.update({_id: Session.get("gameId")}, {$set: {player1WordList: wordList}});
-    }else {
-        Games.update({_id: Session.get("gameId")}, {$set: {player2WordList: wordList}});
-    }
+_removeWordFromWordHistory = function(game, word){
+    ["player1", "player2"].forEach(function(userType){
+        var wordList = _getSelfWordList(game, userType);
+        var index = wordList.indexOf(word);
+        if (index > - 1) {
+            wordList.splice(index, 1);
+        }
+        _setWordList(userType, wordList);
+    });
 };
-
-
 
 _sendWord = function () {
     var answerBox = document.getElementById("answer-box");
@@ -49,19 +34,10 @@ _sendWord = function () {
 
 _addToWordHistory = function(word) {
     var game = Games.findOne({_id: Session.get("gameId")});
-    var words;
-    if (Meteor.userId() == game.player1) {
-        words = game.player1WordList;
-    } else {
-        words = game.player2WordList;
-    }
+    var words = _setWordListUsingUserId(game);
     if (!_isInArray(word, words)){
         words.push(word);
-        if (Meteor.userId() == game.player1) {
-            Games.update({_id: Session.get("gameId")}, {$set: {player1WordList: words}});
-        } else {
-            Games.update({_id: Session.get("gameId")}, {$set: {player2WordList: words}});
-        }
+        _setSelfWordListFromId(game, words);
     }
 };
 
@@ -77,3 +53,7 @@ _resetAnswerBox = function() {
 
 //TODO Use this instead of if statement player1 player2
 //http://stackoverflow.com/questions/17362401/how-to-set-mongo-field-from-variable
+
+//TODO export methods properly
+//http://stackoverflow.com/questions/16534363/call-functions-from-separate-files-with-meteor
+//Shwaydogg answer

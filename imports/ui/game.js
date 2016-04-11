@@ -2,7 +2,8 @@ import './game.html';
 import './lib.js';
 Games = new Meteor.Collection("games");
 
-var clockTime = 60;
+clockTime = 60;
+timePerPicture = 10;
 Template.game.onCreated(function gameOnCreated() {
     Meteor.subscribe("games");
 
@@ -10,12 +11,11 @@ Template.game.onCreated(function gameOnCreated() {
         Session.set("gameId", gameId);
         if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
             var timeCountDown = setInterval(function(){
-                timeLeft = clockTime;
                 date = new Date();
                 time = Math.floor(date.getTime() / 1000);
                 startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
                 timeLeft = clockTime - (time - startTime);
-                if(timeLeft % 10 == 0){
+                if(timeLeft % timePerPicture == 0){
                     Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
                 }
                 Session.set("time", timeLeft);
@@ -48,7 +48,7 @@ Template.game.events({
 Template.game.helpers({
     sessionId: '',
     started: function() {
-        gameId = Session.get("gameId");
+        var gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
             return Games.findOne({_id: gameId}).started;
         }
@@ -59,7 +59,7 @@ Template.game.helpers({
         }
     },
     timeLeft: function() {
-        gameId = Session.get("gameId");
+        var gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
             return Games.findOne({_id: gameId}).timeLeft;
         }else{
