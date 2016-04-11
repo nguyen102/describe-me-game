@@ -25,12 +25,15 @@ _removeWordFromWordHistory = function(game, word){
         }
         _setWordList(userType, wordList);
     });
-};
+};  
 
 _sendWord = function () {
+    var game = Games.findOne({_id: Session.get("gameId")});
     var answerBox = document.getElementById("answer-box");
     lastEnteredWord = answerBox.value;
-    _addToWordHistory(answerBox.value);
+    if (! _isInArray(lastEnteredWord, game.matchingWords) && ! _isInArray(lastEnteredWord, _getSelfWordListUsingUserId(game))){
+        _addToWordHistory(answerBox.value);
+    }
 };
 
 _addToWordHistory = function(word) {
@@ -61,7 +64,8 @@ _opposingPlayerUserName = function(game) {
 };
 //If both user type a word at the same time, Meteor will not report the matching word because the DB update for
 //both the client won't recieve the updated words fast enough
-_lookForWordsThatMightHaveBeenMissed = function(game){
+_lookForWordsThatMightHaveBeenMissed = function(){
+    var game = Games.findOne({_id: Session.get("gameId")});
     var matchingElements = _getMatchingElements(game.player1WordList, game.player2WordList);
     var previouslyMatchedWords = game.matchingWords;
     var newMatchedWords = previouslyMatchedWords;

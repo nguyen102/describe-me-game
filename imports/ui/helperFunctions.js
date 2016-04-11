@@ -14,6 +14,14 @@ _getSelfWordList = function(game, userType){
     }
 };
 
+_getSelfWordListUsingUserId = function(game) {
+    if (Meteor.userId() == game.player1) {
+        return game.player1WordList;
+    } else {
+        return game.player2WordList;
+    }
+};
+
 _setWordListUsingUserId = function(game) {
     if (Meteor.userId() == game.player1) {
         return game.player1WordList;
