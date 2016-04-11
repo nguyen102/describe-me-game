@@ -60,7 +60,7 @@ _opposingPlayerUserName = function(game) {
     }
 };
 
-_lookForWordsThatHaveBeenMissed = function(game){
+_lookForWordsThatMightHaveBeenMissed = function(game){
     var matchingElements = _getMatchingElements(game.player1WordList, game.player2WordList);
     var previouslyMatchedWords = game.matchingWords;
     var newMatchedWords = previouslyMatchedWords;
