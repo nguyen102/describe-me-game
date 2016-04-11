@@ -35,8 +35,8 @@ Meteor.startup(() => {
         _getSixRandomPictures = function() {
             var randomPictureUrls = [];
             for(var i = 0; i < 6; i++){
-                var number = Math.floor((Math.random() * 1000) + 1);
-                randomPictureUrls.push("https://unsplash.it/800/500?image=" + number);
+                var number = Math.floor((Math.random() * 100) + 10);
+                randomPictureUrls.push("https://unsplash.it/300/500/?image=" + number);
             }
             return randomPictureUrls;
 
