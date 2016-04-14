@@ -2,44 +2,33 @@ import { Meteor } from 'meteor/meteor';
 
 Games = new Meteor.Collection("games");
 
-var imageUrls = ["https://unsplash.it/800/500?image=0",
-"http://cdn1.theodysseyonline.com/files/2015/12/21/6358631429926013411708851658_Dog-Pictures.jpg", 
-    "http://media.caranddriver.com/images/media/51/2016-10best-cars-lead-photo-664005-s-original.jpg",
-    "http://u.realgeeks.media/islandsearch/tahitiisland.jpg",
-    "https://images.trvl-media.com/media/content/expus/graphics/launch/cruise1320x742.jpg",
-    "http://az616578.vo.msecnd.net/files/2016/03/05/635928088052093326-1019743780_woman_smelling_flowers_in_the_field.jpg"
-];
-
 Meteor.startup(() => {
 
     if (Meteor.isServer) {
+
+        var Future = Npm.require("fibers/future");
+
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
         Games.remove({});
+
         Meteor.methods({
-            'updatePicture': function(gameId, index) {
+            'updatePicture': function (gameId, index) {
                 var urls = Games.findOne({_id: gameId}).allImageUrls;
-                Games.update({_id: gameId}, 
+                Games.update({_id: gameId},
                     {$set: {imageUrl: urls[index]}});
             },
-            'joinGame': function(playerId, userName) {
+            'joinGame': function (playerId, userName) {
                 return _joinGame(playerId, userName);
             }
         });
 
-        Meteor.publish("games", function() {
+        Meteor.publish("games", function () {
             return Games.find();
         });
-        Meteor.publish("word_history", function() {
+        Meteor.publish("word_history", function () {
             return WordHistory.find();
         });
-
-        _getSixRandomPictures = function() {
-            var randomPictureUrls = [];
-            for(var i = 0; i < 6; i++) {
-                var number = Math.floor((Math.random() * 100) + 10);
-                randomPictureUrls.push("https://unsplash.it/300?image=" + number);
-            }
-            return randomPictureUrls;
-        };
 
         function _joinGame(playerId, userName) {
             var availableGame = Games.findOne({
@@ -48,10 +37,10 @@ Meteor.startup(() => {
                 started: false,
                 done: false
             });
-            
+
             //If existing game exist, set it to be done and start a new game
             var existingGame = Games.findOne({
-               player1: playerId,
+                player1: playerId,
                 done: false
             });
 
@@ -62,19 +51,16 @@ Meteor.startup(() => {
                 });
             }
 
-            if (existingGame != null){
+            if (existingGame != null) {
                 return existingGame._id;
             }
             if (availableGame && availableGame.player1 != playerId) {
-                var urls = _getSixRandomPictures();
                 availableGame.player2 = playerId;
                 availableGame.user2Name = userName;
                 availableGame.started = false;
                 availableGame.score = 0;
                 availableGame.player1WordList = [];
                 availableGame.player2WordList = [];
-                availableGame.imageUrl = urls[0];
-                availableGame.allImageUrls = urls;
                 availableGame.player1Ready = false;
                 availableGame.player2Ready = false;
 
@@ -85,17 +71,49 @@ Meteor.startup(() => {
 
             } else {
 
-                let gameId = Games.insert({
+                let futures = [];
+
+                for (let images = 0; images < 6; images++) {
+
+                    let future = new Future();
+                    futures.push(future);
+
+                    HTTP.get(
+                        'https://feature-joo-gs-random-preview-url.graphicstock.videoblocksdev.com/api/v1/random-preview',
+                        {
+
+                        },
+                        function (error, response) {
+                            if (error) {
+                                future.return({success: false});
+                            } else {
+                                future.return(response.data);
+                            }
+                        });
+                }
+
+                let urls = _.map(futures, function (future) {
+
+                    let result = future.wait();
+
+                    if (result.success) {
+                        return result.info.small_preview_url;
+                    } else {
+                        return 'https://vb-wasabi-test.s3.amazonaws.com/preview/track-and-field-athlete-jumping-hurdle_G1amnU8d_S.jpg';
+                    }
+                });
+
+                return Games.insert({
                     player1: playerId,
                     user1Name: userName,
                     matchingWords: [],
                     timeLeft: 60,
                     started: false,
-                    done: false
+                    done: false,
+                    imageUrl: urls[0],
+                    allImageUrls: urls
                 });
-
-                return gameId;
             }
-        };
-    };
+        }
+    }
 });
