@@ -9,25 +9,6 @@ Template.game.onCreated(function gameOnCreated() {
 
     Meteor.call('joinGame', Meteor.userId(), Meteor.user().username, function(error, gameId){
         Session.set("gameId", gameId);
-        // if (Games.findOne({_id: Session.get("gameId")}) && Games.findOne({_id: Session.get("gameId")}).started == true){
-        //     var timeCountDown = setInterval(function(){
-        //         console.log("inside counter");
-        //         date = new Date();
-        //         time = Math.floor(date.getTime() / 1000);
-        //         startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
-        //         timeLeft = clockTime - (time - startTime);
-        //         if(timeLeft % timePerPicture == 0){
-        //             Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
-        //         }
-        //         Session.set("time", timeLeft);
-        //         Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
-        //         if (timeLeft <= 0){
-        //             clearInterval(timeCountDown);
-        //             Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
-        //             _lookForWordsThatMightHaveBeenMissed();
-        //         }
-        //     }, 1000);
-        // }
     });
 
 });
@@ -55,6 +36,7 @@ Template.game.helpers({
     started: function() {
         var gameId = Session.get("gameId");
         if(Games.findOne({_id: gameId}) != null){
+            _startTimer();
             return Games.findOne({_id: gameId}).started;
         }
     },
@@ -64,12 +46,13 @@ Template.game.helpers({
         }
     },
     timeLeft: function() {
-        var gameId = Session.get("gameId");
-        if(Games.findOne({_id: gameId}) != null){
-            return Games.findOne({_id: gameId}).timeLeft;
-        }else{
-            return clockTime;
-        }
+        // var gameId = Session.get("gameId");
+        // if(Games.findOne({_id: gameId}) != null){
+        //     return Games.findOne({_id: gameId}).timeLeft;
+        // }else{
+        //     return clockTime;
+        // }
+        return Session.get("time");
     },
     imageUrl: function() {
         if (Games.findOne(Session.get("gameId")) != null){

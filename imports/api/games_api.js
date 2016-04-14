@@ -42,14 +42,30 @@ Meteor.startup(() => {
         };
 
         function _joinGame(playerId, userName) {
-            let availableGame = Games.findOne({
+            var availableGame = Games.findOne({
                 player1: {$exists: true},
                 player2: {$exists: false},
                 started: false,
                 done: false
             });
+            
+            //If existing game exist, set it to be done and start a new game
+            var existingGame = Games.findOne({
+               player1: playerId,
+                done: false
+            });
 
-            if (availableGame && availableGame.player1 != playerId && availableGame.player2 != playerId) {
+            if (existingGame == null) {
+                existingGame = Games.findOne({
+                    player2: playerId,
+                    done: false
+                });
+            }
+
+            if (existingGame != null){
+                return existingGame._id;
+            }
+            if (availableGame && availableGame.player1 != playerId) {
                 var urls = _getSixRandomPictures();
                 availableGame.player2 = playerId;
                 availableGame.user2Name = userName;
@@ -58,13 +74,12 @@ Meteor.startup(() => {
                 availableGame.player1WordList = [];
                 availableGame.player2WordList = [];
                 availableGame.imageUrl = urls[0];
-                // availableGame.startTime = Math.floor(new Date().getTime() / 1000);
                 availableGame.allImageUrls = urls;
                 availableGame.player1Ready = false;
                 availableGame.player2Ready = false;
 
                 Games.update({_id: availableGame._id}, availableGame);
-                
+
 
                 return availableGame._id;
 

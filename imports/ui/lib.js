@@ -121,16 +121,17 @@ _readyToStart = function() {
 _startTimer = function() {
     if (Games.findOne({_id: Session.get("gameId")})){
         var timeCountDown = setInterval(function(){
-            console.log("inside counter");
-            date = new Date();
-            time = Math.floor(date.getTime() / 1000);
-            startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
-            timeLeft = clockTime - (time - startTime);
+            var date = new Date();
+            var time = Math.floor(date.getTime() / 1000);
+            var startTime = Games.findOne({_id: Session.get("gameId")}).startTime;
+            var timeLeft = clockTime - (time - startTime);
             if(timeLeft % timePerPicture == 0){
                 Meteor.call("updatePicture", Session.get("gameId"), 6 - Math.floor(timeLeft / 10), function(error, result){});
             }
-            Session.set("time", timeLeft);
-            Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
+            if(timeLeft >= 0 ){
+                // Games.update({_id: Session.get("gameId")}, {$set: {timeLeft: timeLeft}});
+                Session.set("time", timeLeft);
+            }
             if (timeLeft <= 0){
                 clearInterval(timeCountDown);
                 Games.update({_id: Session.get("gameId")}, {$set: {done: true}});
