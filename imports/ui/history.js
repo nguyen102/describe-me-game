@@ -8,9 +8,7 @@ Template.history.onCreated(function gameOnCreated() {
 
 Template.game.helpers({
 
-    history: function() {
-        return Games.find({}).map(function(item){
-           return item.toString();
-        });
+    recentGames: function() {
+        return Games.find();
     }
 });

@@ -1,4 +1,8 @@
 <template name="history">
     yo
-    {{recentGames}}
+    {{#each game in recentGames}}
+        {{game._id}}
+    {{else}}
+        no games!
+    {{/each}}
 </template>
