@@ -6,9 +6,12 @@ Template.history.onCreated(function gameOnCreated() {
 
 });
 
-Template.game.helpers({
+Template.history.helpers({
 
     recentGames: function() {
-        return Games.find();
+
+        return Games.find().map(function(item){
+            return JSON.stringify(item, null, 2);
+        });
     }
 });
