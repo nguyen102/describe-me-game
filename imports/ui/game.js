@@ -1,7 +1,6 @@
 import './game.html';
 import './lib/lib.js';
 
-Games = new Meteor.Collection("games");
 
 clockTime = 60;
 timePerPicture = 10;
