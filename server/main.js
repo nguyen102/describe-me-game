@@ -1,2 +1,2 @@
-import '../imports/api/games_api.js';
+import '/imports/startup/server';
 

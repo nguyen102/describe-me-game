@@ -1,10 +1,13 @@
 import './game.html';
-import './lib.js';
+import './lib/lib.js';
+
 Games = new Meteor.Collection("games");
 
 clockTime = 60;
 timePerPicture = 10;
+
 Template.game.onCreated(function gameOnCreated() {
+
     Meteor.subscribe("games");
 
     Meteor.call('joinGame', Meteor.userId(), Meteor.user().username, function(error, gameId){

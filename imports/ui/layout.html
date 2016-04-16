@@ -1,0 +1,22 @@
+<template name="layout">
+    <body>
+    <div class="container">
+
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <a class="brand" href="">Describe Me!</a>
+                <ul class="nav">
+                    <!--<li><a href="https://www.wearevideoblocks.com" target="_blank">We Are Video Blocks</a></li>-->
+                    <li><a href="{{pathFor route='game'}}">Play!</a></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a>{{> loginButtons align="right"}}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        {{> yield}}
+
+    </div>
+    </body>
+</template>

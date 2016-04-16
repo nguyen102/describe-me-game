@@ -1,6 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 
 Games = new Meteor.Collection("games");
+/**
+ * {
+ *  _id,
+ *  decks: [ { url_id, image_url, p1words, p2words}, ... ]
+ * ready: [ p1/p2 ids],
+ * p1id,
+ * p2id,
+ * started,
+ * done,
+ * timeleft
+ * }
+ */
 
 Meteor.startup(() => {
 
@@ -8,35 +20,24 @@ Meteor.startup(() => {
 
         var Future = Npm.require("fibers/future");
 
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
         Games.remove({});
 
         Meteor.methods({
-            'updatePicture': function (gameId, index) {
-                var urls = Games.findOne({_id: gameId}).allImageUrls;
-                Games.update({_id: gameId},
-                    {$set: {imageUrl: urls[index]}});
-            },
             'joinGame': function (playerId, userName) {
                 return _joinGame(playerId, userName);
+            },
+            'startGame': function(gameId, playerId) {
+                let game = Games.findOne({ _id: gameId });
+
+
             }
         });
 
         Meteor.publish("games", function () {
             return Games.find();
         });
-        Meteor.publish("word_history", function () {
-            return WordHistory.find();
-        });
 
         function _joinGame(playerId, userName) {
-            var availableGame = Games.findOne({
-                player1: {$exists: true},
-                player2: {$exists: false},
-                started: false,
-                done: false
-            });
 
             //If existing game exist, set it to be done and start a new game
             var existingGame = Games.findOne({
@@ -54,6 +55,14 @@ Meteor.startup(() => {
             if (existingGame != null) {
                 return existingGame._id;
             }
+
+            let availableGame = Games.findOne({
+                player1: {$exists: true},
+                player2: {$exists: false},
+                started: false,
+                done: false
+            });
+
             if (availableGame && availableGame.player1 != playerId) {
                 availableGame.player2 = playerId;
                 availableGame.user2Name = userName;
@@ -65,7 +74,6 @@ Meteor.startup(() => {
                 availableGame.player2Ready = false;
 
                 Games.update({_id: availableGame._id}, availableGame);
-
 
                 return availableGame._id;
 
