@@ -1,4 +1,4 @@
-import '/imports/ui/layout.html';
+import '/client/main.html';
 
 import '/imports/ui/game.js';
 import '/imports/ui/intro.html';

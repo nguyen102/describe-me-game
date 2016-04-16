@@ -24,3 +24,4 @@ accounts-password
 session
 http
 iron:router
+meteorhacks:fast-render

@@ -1,4 +1,8 @@
 <template name="layout">
+    <head>
+        <title>Describe Me</title>
+    </head>
+
     <body>
     <div class="container">
 
@@ -7,6 +11,7 @@
                 <a class="brand" href="">Describe Me!</a>
                 <ul class="nav">
                     <!--<li><a href="https://www.wearevideoblocks.com" target="_blank">We Are Video Blocks</a></li>-->
+                    <li><a href="{{pathFor route='intro'}}">Intro</a></li>
                     <li><a href="{{pathFor route='game'}}">Play!</a></li>
                 </ul>
                 <ul class="nav pull-right">
@@ -15,8 +20,9 @@
             </div>
         </div>
 
-        {{> yield}}
-
+        <div class="row-fluid">
+            {{> yield}}
+        </div>
     </div>
     </body>
 </template>
