@@ -1,7 +1,6 @@
 # need to haves
 - hit GS to grab random image url
 - join pre-existing game that you may still be playing, if exists
-- "start" button
 
 # nice to haves
 - instructions/tutorials
